@@ -57,26 +57,83 @@ const create_user = async(req, res = response) => {
             msg: 'Please contact the administrator'
         });
     }
+}
 
-
-};
-
-const user_login = (req, res = response) => {
+const user_login = async(req, res = response) => {
     
     const { email, password } = req.body;
 
-    return res.json({
-        ok: true,
-        msg: 'Login user'
-    });
-};
+    try {
+        // User exists? (email)
+        const user_db = await User.findOne({email});
+
+        if(!user_db) {
+            return res.status(400).json({
+                ok: false,
+                msg: 'Wrong credentials - Username does not exist' // In production change msg to 'Wrong credentials' for security reasons
+            });
+        }
+
+        // Is the password correct??
+        const is_correct_password = bcrypt.compareSync(password, user_db.password);
+
+        if(!is_correct_password) {
+            return res.status(400).json({
+                ok: false,
+                msg: 'Wrong credentials - Wrong password' // In production change msg to 'Wrong credentials' for security reasons
+            });
+        }
+
+        // Generate JWT
+        const token = await create_jwt(user_db.id, user_db.name);
+
+        // Successful response
+        return res.status(201).json({
+            ok: true,
+            uid: user_db.id,
+            name: user_db.name,
+            token: token
+        });
+
+    } catch (error) {
+        console.log(error);
+        return res.status(500).json({
+            ok: false,
+            msg: 'Please contact the administrator'
+        });
+    }
+}
 
 const renew_token = (req, res) => {
-    return res.json({
-        ok: true,
-        msg: 'Renew'
-    });
-};
+
+    const token = req.header('x-token');
+
+    try {
+
+        if(!token) {
+            return res.status(401).json({
+                ok: false,
+                msg: 'Token error'
+            });
+        }
+
+
+        
+        return res.json({
+            ok: true,
+            msg: 'Renew',
+            token: token
+        });
+        
+    } catch (error) {
+        console.log(error);
+        return res.status(500).json({
+            ok: false,
+            msg: 'Please contact the administrator'
+        });
+    }
+
+}
 
 
 module.exports = {
