@@ -1,8 +1,10 @@
 # Backend-Server
 
-Backend: Node, Express, Mongoose
+Backend: Node, Express, MongoDb Atlas
 
 Instructions: 
+
+        Install node_modules: npm install
 
         Create .env file with:
 
