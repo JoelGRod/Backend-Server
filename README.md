@@ -16,5 +16,13 @@ Instructions:
 
 (dotenv implemented)
 
+Endpoints:
+
+        /api/auth/new
+
+        /api/auth/login
+        
+        /api/auth/renew
+
 
 
