@@ -116,7 +116,7 @@ const renew_token = async (req, res) => {
             ok: true,
             msg: 'Renew',
             name: name,
-            id: uid,
+            uid: uid,
             token: token
         });
 
