@@ -46,8 +46,11 @@ const create_user = async (req, res = response) => {
         // Successful response
         return res.status(201).json({
             ok: true,
+            // Delete this part of the response in future, 
+            // you dont need this in a register action
             uid: user_db.id,
             name: user_db.name,
+            email: user_db.email,
             token: token
         });
 
@@ -92,6 +95,7 @@ const user_login = async (req, res = response) => {
             ok: true,
             uid: user_db.id,
             name: user_db.name,
+            email: user_db.email,
             token: token
         });
 
@@ -109,14 +113,22 @@ const renew_token = async (req, res) => {
     const { uid, name } = req.user_data;
 
     try {
+        // User exists? (email)
+        const user_db = await User.findById(uid);
+        if(!user_db) {
+            return res.status(400).json({
+                ok: false,
+                msg: 'User not found'
+            });
+        }
         // Generate JWT
         const token = await create_jwt(uid, name);
         // Successful response
         return res.json({
             ok: true,
-            msg: 'Renew',
-            name: name,
-            uid: uid,
+            uid: user_db.id,
+            name: user_db.name,
+            email: user_db.email,
             token: token
         });
 
