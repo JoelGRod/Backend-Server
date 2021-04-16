@@ -1,5 +1,6 @@
 const express = require('express');
 const cors = require('cors');
+const path = require('path');
 const { dbConnection } = require('./db/config');
 require('dotenv').config(); // Environment variables
 
@@ -20,6 +21,11 @@ app.use(express.json());
 
 // Routes (middleware)
 app.use('/api/auth', require('./routes/auth'));
+
+// Manage Angular App Routes
+app.get( '*', (req, res) => {
+    res.sendFile( path.resolve( __dirname, 'public/index.html') );
+});
 
 // GET basic endpoint (DELETE THIS, is only for initial test)
 // app.get('/', (request, response) => {
